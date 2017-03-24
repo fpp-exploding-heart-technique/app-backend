@@ -19,6 +19,9 @@ var HomeController = require('./controllers/home');
 var userController = require('./controllers/user');
 var contactController = require('./controllers/contact');
 
+var event = require('./controllers/event')(require('./models/event')(mongoose));
+
+
 // Passport OAuth strategies
 require('./config/passport');
 
@@ -69,6 +72,9 @@ app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', '
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));
 app.get('/auth/google', passport.authenticate('google', { scope: 'profile email' }));
 app.get('/auth/google/callback', passport.authenticate('google', { successRedirect: '/', failureRedirect: '/login' }));
+
+// Kul yapimi routing
+app.use('/events', event);
 
 // Production error handler
 if (app.get('env') === 'production') {
