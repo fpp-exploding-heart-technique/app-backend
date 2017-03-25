@@ -27,8 +27,8 @@ var event = require('./controllers/event')(require('./models/event')(mongoose));
 
 var app = express();
 mongoose.promise = Promise;
-console.log(process.env.MONGODB);
-mongoose.connect(process.env.MONGODB);
+console.log(process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI);
 mongoose.connection.on('error', function(err) {
   console.log('MongoDB Connection Error: ' + err);
   process.exit(1);
