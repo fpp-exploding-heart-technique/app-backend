@@ -9,11 +9,11 @@ var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var dotenv = require('dotenv');
 var mongoose = require('mongoose');
-var passport = require('passport');
+//var passport = require('passport');
 
 // Load environment variables from .env file
 dotenv.load();
-console.log(process.env.FACEBOOK_ID);
+//console.log(process.env.FACEBOOK_ID);
 // Controllers
 var HomeController = require('./controllers/home');
 var userController = require('./controllers/user');
@@ -24,7 +24,7 @@ var user = require('./controllers/user')(require('./models/user')(mongoose));
 
 
 // Passport OAuth strategies
-require('./config/passport');
+//require('./config/passport');
 
 var app = express();
 mongoose.promise = Promise;
@@ -45,8 +45,8 @@ app.use(expressValidator());
 app.use(methodOverride('_method'));
 //app.use(session({ secret: process.env.SESSION_SECRET, resave: true, saveUninitialized: true }));
 app.use(flash());
-app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.initialize());
+//app.use(passport.session());
 app.use(function(req, res, next) {
   res.locals.user = req.user;
   next();
@@ -55,8 +55,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 
-app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
-app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/user', failureRedirect: '/login' }));
+//app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
+//app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/user', failureRedirect: '/login' }));
 
 // Kul yapimi routing
 app.use('/users', user);

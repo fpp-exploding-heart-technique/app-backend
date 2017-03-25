@@ -7,14 +7,14 @@ module.exports = (User) => {
   */
 
   router.post('/checkin', (req, res) => {
-    User.searchUsers({'email': req.body.email}, (err, data) => {
+    User.searchUsers({'facebook': req.body.facebook}, (err, data) => {
       if(err) {
         console.error(err);
         res.status(500);
         res.send({message: "Error while searching user."});
       }
       if(data.length == 0) {
-        User.createUser(req.body.email, req.body.fbuserid, (err, data) => {
+        User.createUser(req.body.email, req.body.facebook, (err, data) => {
           if(err) {
             console.error(err);
             res.status(500);

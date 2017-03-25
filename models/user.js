@@ -3,7 +3,7 @@ module.exports = (mongoose) => {
 
     const userSchema  = new Schema({
       email: String,
-      fbuserid: String,
+      facebook: String,
 
     }, {collection: 'users'});
 
@@ -13,6 +13,11 @@ module.exports = (mongoose) => {
       console.log("Searching users:", query);
       User.find(query, callback);
     };
+
+    const findOne = (query, callback) => {
+
+    }
+
     const createUser = (email, fbuserid, callback) => {
       console.log("Creating new user:", email, fbuserid);
       const usr = new User({
@@ -24,6 +29,7 @@ module.exports = (mongoose) => {
 
 
     return {
-
+      findOne  : User.findOne,
+      findById : User.findById
     }
 }
