@@ -47,7 +47,7 @@ module.exports = (mongoose) => {
         }
       } else
         return null;
-    }
+    };
 
     const readArr = (reader) => {
       return (arrStr) => {
@@ -62,7 +62,7 @@ module.exports = (mongoose) => {
         if(null in arr) return null;
         return arr;
       };
-    }
+    };
 
     const findEventById = (eventId, callback) => {
       //events.findOne({_id: eventId}, callback);
