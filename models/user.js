@@ -9,19 +9,20 @@ module.exports = (mongoose) => {
 
     const User = mongoose.model('User', userSchema);
 
-    const searchUsers = (query, callback) => {
-      console.log("Searching users:", query);
+    const find = (query, callback) => {
+      console.log("Searching user:", query);
       User.find(query, callback);
     };
 
-    const findOne = (query, callback) => {
+    const findByFBId = (facebook, callback) => {
+      console.log("Searching user:", facebook);
+      User.findOne({'facebook': facebook}, callback);
+    };
 
-    }
-
-    const createUser = (email, fbuserid, callback) => {
-      console.log("Creating new user:", email, fbuserid);
+    const createUser = (email, facebook, callback) => {
+      console.log("Creating new user:", email, facebook);
       const usr = new User({
-        'fbuserid' : fbuserid,
+        'facebook' : facebook,
         'email'    : email
       });
       usr.save(callback);
@@ -29,7 +30,10 @@ module.exports = (mongoose) => {
 
 
     return {
-      findOne  : User.findOne,
-      findById : User.findById
+      find     : find,
+      //findOne  : findOne,
+      findByFBId : findByFBId,
+
+      createUser: createUser
     }
 }
