@@ -4,29 +4,39 @@ module.exports = (events) => {
     router.get('/initdb', (req, res) => {
       const data = [
         {
-          "time":events.readTime( 1490427060000, 1490427062000),
-          "loc":events.readLocation("41.105233, 29.028161"),
-          "type":events.readType("kultur"),
-          "desc":events.readDescription("müze falan gezek aağbi"),
-          "owner":events.readOwner("burak0")
+          attendees: [], requests: [],
+          title       : events.readTitle("Event 1"),
+          start       : 1490427060000,
+          end         : 1490427062000,
+          location    : events.readLocation("41.105233, 29.028161"),
+          type        : events.readType("Doğa"),
+          description : events.readDescription("kamp"),
+          owner       : events.readOwner("burak0")
         },
         {
-          "time":events.readTime( 1490427060000, 1490427062000),
-          "loc":events.readLocation("41.105205, 29.026477"),
-          "type":events.readType("kultur"),
-          "desc":events.readDescription("müze falan gezek aağbi"),
-          "owner":events.readOwner("burak1")
+          attendees: [], requests: [],
+          title       : events.readTitle("Event 2"),
+          start       : 1490427060000,
+          end         : 1490427062000,
+          location    : events.readLocation("41.105205, 29.026477"),
+          type        : events.readType("Spor"),
+          description : events.readDescription("basalım, bench basalım"),
+          owner       : events.readOwner("burak1")
         },
         {
-          "time":events.readTime( 1490427060000, 1490427062000),
-          "loc":events.readLocation("41.104911, 29.024269"),
-          "type":events.readType("kultur"),
-          "desc":events.readDescription("müze falan gezek aağbi"),
-          "owner":events.readOwner("burak2")
+          attendees: [], requests: [],
+          title       : events.readTitle("Event 3"),
+          start       : 1490427060000,
+          end         : 1490427062000,
+          location    : events.readLocation("41.104911, 29.024269"),
+          type        : events.readType("Kültür"),
+          description : events.readDescription("müze falan gezek aağbi"),
+          owner       : events.readOwner("burak2")
         }
       ];
-      var r =data.map(x => events.createEvent(
-        x.time, x.loc, x.desc, x.type, x.owner
+      var r = 0;
+      data.map(x => events.createEvent(
+        x, (err,data)=>{console.log(x,err);}
       ));
       console.log(r);
       res.sendStatus(200);
@@ -35,11 +45,11 @@ module.exports = (events) => {
 
     // get event by id
     router.get('/:id', (req, res) => {
-        events.findEventById(req.param.id, (err, data) => {
+        console.log(req.params.id);
+        events.findEventById(req.params.id, (err, data) => {
           if (err) {
             res.sendStatus(404);
           } else {
-            console.log("found");console.log(data);
             res.send(data);
           }
         });
@@ -60,46 +70,83 @@ module.exports = (events) => {
     //     loc=36,42  enlem,boylam cifti
     //     radius= 200  200 metre yaricapinda ara
     router.get('/', (req, res) => {
-      events.findEvents(
-        events.readTime(req.param("start"), req.param("end")),
-        events.readTypes(req.param("type")),
-        events.readOwner(req.param("owner")),
-        events.readLocation(req.param("loc")),
-        Number(req.param("radius")),
-        (err, data) => {
+      // build the query
+      var query = {};
+      var t;
+      if(t = events.readId(req.param("eventId")))
+        query.id = t;
+      if(t = events.readTitle(req.param("title")))
+        query.title = t;
+      if(t = events.readTime(req.param("start", req.param("end")))) {
+        query.start = {$lt : t.end};
+        query.end   = {$gt : t.start};
+      }
+      if(t = events.readOwner(req.param("owner")))
+        query.owner = t;
+      if(t = events.readLocation(req.param("loc"))) {
+        var r = Number(req.param("radius"));
+        query.location = {
+          $near: {
+            $geometry: loc,
+            $maxDistance: (r ? r : 1000)
+          }
+        };
+      }
+      if(t = events.readType(req.param("type")))
+        query.type = {$in: t};
+      if(t = events.readDescription(req.param("desc")))
+        query.description = t;
+
+      // execute
+      events.findEvents(query, (err, data) => {
         if (err) {
           console.error(err);
-          res.sendStatus(404);
+          res.status(500);
+          res.send({message: "What can heroku do sometimes"});
         } else {
-          res.send(data);
+          res.send(data.map(x => {
+            return {
+              start: x.start,
+              end: x.end,
+              location: x.location,
+              title: x.title,
+              description: x.description,
+              owner: x.owner,
+              type: x.type
+            }
+          }));
         }
       });
     });
 
     // create event
     router.post('/', (req, res) => {
-      var time  = events.readTime(req.body.start, req.body.end);
-      var owner = events.readOwner(req.body.owner);
-      var loc   = events.readLocation(req.body.loc);
-      var type  = events.readType(req.body.type);
-      var desc  = events.readDescription(req.body.desc);
-      console.log("Create event:");
-      console.log("    time  : ", time, req.body.start);
-      console.log("    owner : ", owner);
-      console.log("    loc   : ", loc);
-      console.log("    type  : ", type);
-
-      if ( time && type && owner && loc ) {
-        events.createEvent(time, loc, desc, type, owner, (err, data) => {
+      var e = {attendees : [], requests: []};
+      var t;
+      e.title = events.readTitle(req.body.title);
+      if(t = events.readTime(req.body.start, req.body.end)) {
+        e.start = t.start;
+        e.end   = t.end;
+      }
+      e.owner       = events.readOwner(req.body.owner);
+      e.location    = events.readLocation(req.body.loc);
+      e.type        = events.readType(req.body.type);
+      e.description = events.readDescription(req.body.desc);
+      console.log("Create: ", e);
+      if ( e.description && e.title && e.start && e.end &&
+           e.type && e.owner && e.location
+      ) {
+        events.createEvent(e, (err, data) => {
           if (err) {
             console.error(err);
-            res.sendStatus(400);
+            res.status(500);
+            res.send({message: "What can heroku do sometimes"});
           }
           else res.send(data._id);
-
         });
       } else {
-        res.sendStatus(400);
+        res.status(400);
+        res.send({message: "Some arguments are missing or invalid"});
       }
     });
 
@@ -107,9 +154,10 @@ module.exports = (events) => {
     router.post('/attendReq', (req, res) => {
       events.attendRequest(req.body.eventId, req.body.userId, (err, data) => {
         if(err){
-          res.sendStatus(400);
+          res.status(404);
+          res.send({message: "Event could not found"});
         } else {
-          res.sendStatus(200);
+          res.send({message: "Request is added"});
         }
       });
     });
@@ -118,44 +166,44 @@ module.exports = (events) => {
     router.post('/addAttendee', (req, res) => {
       events.addAttendee(req.body.eventId, req.body.userId, (err, data) => {
         if(err){
-          res.sendStatus(400);
+          res.status(404);
+          res.send({message: "Event could not found"});
         } else {
-          res.sendStatus(200);
+          res.send({message: "Attendee is added"});
         }
       });
     });
 
     // update an event
     router.put('/', (req, res) => {
-      var id    = events.readId(req.body.eventId);
-      var time  = events.readTime(req.body.start, req.body.end);
-      var owner = events.readOwner(req.body.owner);
-      var loc   = events.readLocation(req.body.loc);
-      var type  = events.readType(req.body.type);
-      var desc  = events.readDescription(req.body.desc);
-      console.log("Update event:");
-      console.log("    id    : ", id);
-      console.log("    time  : ", time);
-      console.log("    owner : ", owner);
-      console.log("    loc   : ", loc);
-      console.log("    type  : ", type);
-      console.log("    desc  : ", desc);
-
-      events.updateEvent(id, time, loc, desc, type, owner, (err, data) =>{
-        if(err){
-          console.error(err);
-          res.sendStatus(400);
-        } else {
-          res.send(data);
+      var id;
+      if(!(id = events.readId(req.body.eventId))){
+        res.status(400);
+        res.send({message:"eventId is missing"});
+      }
+      else {
+        var change = {};
+        var t;
+        if(t = events.readTitle(req.body.title))      change.title = t;
+        if(t = events.readTime(req.body.start, req.body.end)) {
+          change.start = t.start;
+          change.end   = t.end;
         }
-      });
-
-
+        if(t = events.readOwner(req.body.owner))      change.owner    = t;
+        if(t = events.readLocation(req.body.loc))     change.location = t;
+        if(t = events.readType(req.body.type))        change.type     = t;
+        if(t = events.readDescription(req.body.desc)) change.description = t;
+        console.log(change.start, change.end);
+        events.updateEvent(id, change, (err, data) =>{
+          if(err){
+            console.error(err);
+            res.status(400);
+            res.send(err);
+          } else {
+            res.send(data);
+          }
+        });
+      }
     });
-
-
-
-
-
     return router;
 }

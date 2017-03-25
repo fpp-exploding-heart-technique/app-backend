@@ -12,6 +12,7 @@ module.exports = (mongoose) => {
             'required' : true
           }
         },
+        title: String,
         description: String,
         attendees: [String],
         requests: [String],
@@ -31,18 +32,7 @@ module.exports = (mongoose) => {
       "Doğa"
     ];
     const description_limit = 1500;
-    const readTime = (start, end) => {
-      try {
-        start = Date.parse(start);
-        end = Date.parse(end);
-        if(isNaN(start) || isNaN(end)) return null;
-        console.log({start:start, end:end});
-        return {start:start, end:end};
-      } catch(err) {
-        console.error(err.message);
-        return null;
-      }
-    }
+    const title_limit = 50;
     const readLocation = (loc) => {
       if(loc){
         loc = loc.split(',');
@@ -74,70 +64,23 @@ module.exports = (mongoose) => {
       };
     }
 
-    const findEventById = (id, callback) => {
-      events.findOne({id_: id}, callback);
-      //events.findById(id, callback);
+    const findEventById = (eventId, callback) => {
+      //events.findOne({_id: eventId}, callback);
+      events.findById(eventId, callback);
     }
-    const findEvents = (time,type,owner,loc,radius,callback) => {
-      console.log("Get events:");
-      console.log("    time   : ", time);
-      console.log("    owner  : ", owner);
-      console.log("    type   : ", type);
-      console.log("    loc    : ", loc);
-      console.log("    radius : ", radius);
-
-      var query = {};
-      if( time ){
-        query["start"] = {$lt : time.end};
-        query["end"  ] = {$gt : time.start};
-      }
-      if( owner ) query["owner"] = owner;
-      if( type  ) query["type"]  = {$in: type};
+    const findEvents = (query,callback) => {
       console.log(query);
-      if(loc != undefined ) {
-        radius = radius ? radius : 1000;
-        query["location" ] = {
-          $near: {
-            $geometry: loc,
-            $maxDistance: radius
-          }
-        };
-      }
       events.find(query, callback);
     };
 
 
-    const createEvent = (time_, loc_, desc_, type_, owner_, callback) => {
-      var e = new events({
-        end: time_.end,
-        start: time_.start,
-        location: loc_,
-        description: desc_,
-        attendees: [],
-        requests: [],
-        owner: owner_,
-        type: type_
-      });
-
+    const createEvent = (param, callback) => {
+      var e = new events(param);
       e.save(callback);
-
     }
 
-    const updateEvent = (eventId, time_, loc_, desc_, type_, owner_, callback) => {
-      var setFields = {};
-      if( time_  ) {
-        setFields["start"]  = time_.start;
-        setFields["end"]    = time_.end;
-      }
-      if( owner_ ) setFields["owner"]       = owner_;
-      if( type_  ) setFields["type"]        = type_;
-      if( loc_   ) {
-        setFields["loc.coordinates"] = [loc_.coordinates[0],loc_.coordinates[1]];
-        console.log(setFields["loc.coordinates"]);
-      }
-      if( desc_  ) setFields["description"] = desc_;
-
-      events.update({_id: eventId}, setFields, { upsert: false }, callback);
+    const updateEvent = (eventId, change, callback) => {
+      events.update({_id: eventId}, change, { upsert: false }, callback);
     }
 
     const attendRequest = (eventId, userId, callback) => {
@@ -162,7 +105,11 @@ module.exports = (mongoose) => {
     }
     return {
       // Haskell'ciye node.js yazdiran getir mutlu mu simdi :(
-      readTime        : (start, end) => (Number(start), Number(end)), // read timestamp
+      readTitle       : str => str && str.length < title_limit ? str : null,
+      readTime        : (start, end) => {
+                          var t = {"start":Number(start), "end":Number(end)};
+                          return (t.start && t.end)?t:null;
+                        }, // read timestamp
       readLocation    : readLocation,
       readOwner       : str => str ? str : null,
       readType        : str => event_types.indexOf(str)>-1 ? str : null, // valid type name
