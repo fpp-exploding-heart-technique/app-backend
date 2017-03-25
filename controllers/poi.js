@@ -17,6 +17,16 @@ module.exports = (pois) => {
           name        : pois.readName("ITU EEB"),
           location    : pois.readLocation("41.104911, 29.024269"),
           description : pois.readDescription("itü elektrik-elektronik fakültesi binası. yuvamız.")
+        },
+        {
+          name        : pois.readName("Taksim Meydanı"),
+          location    : pois.readLocation("41.0368199,28.9851919"),
+          description : pois.readDescription("Beyoğlu ilçesinde bulunan Taksim Meydanı İstanbul'un en ünlü meydanlarından biridir")
+        },
+        {
+          name        : pois.readName("Sultan Ahmet Camii"),
+          location    : pois.readLocation("41.0054096,28.9746251"),
+          description : pois.readDescription("Sultan Ahmet Camii, 1609-1617 yılları arasında Osmanlı Padişahı I. Ahmed tarafından İstanbul'daki tarihî yarımadada, Mimar Sedefkâr Mehmed Ağa'ya yaptırılmıştır.")
         }
       ];
       var r = 0;
