@@ -2,7 +2,8 @@ module.exports = (mongoose) => {
     var Schema = mongoose.Schema;
 
     const eventSchema  = new Schema({
-        time: { start: Number, end: Number},
+        start: Number,
+        end: Number,
         location: {
           type: [Number],
           index: '2dsphere'
@@ -43,27 +44,25 @@ module.exports = (mongoose) => {
       } else
         return null;
     }
-    const readOwner = (str) => {
-      if(str){
-        return str;
-      } else
-        return null;
-    }
-    const readType = (str) => {
-      if(str){
-        return str;
-      } else
-        return null;
-    }
-    const readDescription = (str) => {
-      if(str){
-        return str;
-      } else
-        return null;
+
+    const readArr = (reader) => {
+      return (arrStr) => {
+        var arr;
+        try {
+          arr = JSON.parse(arrStr);
+        } catch(err) {
+          console.error(err, arr);
+          return null;
+        }
+        arr = arr.map(reader);
+        if(null in arr) return null;
+        return arr;
+      };
     }
 
     const findEventById = (id, callback) => {
-      events.findById(id, callback);
+      events.findOne({id_: id}, callback);
+      //events.findById(id, callback);
     }
     const findEvents = (time,/*loc,*/type,owner,callback) => {
       console.log("Get events:");
@@ -74,17 +73,11 @@ module.exports = (mongoose) => {
 
       var query = {};
       if( time ){
-        query["time"] = {
-          $not: {
-            $or: [
-              {end  : {$lte: time.start}},
-              {start: {$gte: time.end}}
-            ]
-          }
-        }
+        query["start"] = {$lt : time.end};
+        query["end"  ] = {$gt : time.start};
       }
       if( owner ) query["owner"] = owner;
-      if( type  ) query["type"]  = type;
+      if( type  ) query["type"]  = {$in: type};
       console.log(query);
       /*  if(loc   != undefined) {
         query["location" ] = {
@@ -94,9 +87,11 @@ module.exports = (mongoose) => {
       events.find(query, callback);
     };
 
+
     const createEvent = (time_, loc_, desc_, type_, owner_, callback) => {
       var e = new events({
-        time: time_,
+        end: time_.end,
+        start: time_.start,
         location: loc_,
         description: desc_,
         attendees: [],
@@ -107,16 +102,30 @@ module.exports = (mongoose) => {
       e.save(callback);
 
     }
+
+    const updateEvent = (id, time_, loc_, desc_, type_, owner_, callback) => {
+      var setFields = {};
+      if( time_  ) {
+        setFields["start"]  = time_.start;
+        setFields["end"]    = time_.end;
+      }
+      if( owner_ ) setFields["owner"] = owner_;
+      if( type_  ) setFields["type"]  = type_;
+      events.update({id_: id}, {$set: setFields}, callback);console.log("asd");
+    }
+
     return {
-      readTime: readTime,
-      readLocation: readLocation,
-      readOwner: readOwner,
-      readType: readType,
-      readDescription: readDescription,
+      readTime        : readTime,
+      readLocation    : readLocation,
+      readOwner       : (str) => str ? str : null,
+      readType        : (str) => str ? str : null,
+      readTypes       : readArr((str) => str ? str : null), //
+      readDescription : (str) => str ? str : null,
+      readId          : (str) => str ? str : null,
 
       findEventById: findEventById,
       findEvents: findEvents,
       createEvent: createEvent,
-
+      updateEvent: updateEvent
     }
 }
