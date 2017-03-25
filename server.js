@@ -26,7 +26,7 @@ var event = require('./controllers/event')(require('./models/event')(mongoose));
 //require('./config/passport');
 
 var app = express();
-
+mongoose.promise = Promise;
 console.log(process.env.MONGODB);
 mongoose.connect(process.env.MONGODB);
 mongoose.connection.on('error', function(err) {

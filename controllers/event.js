@@ -19,9 +19,10 @@ module.exports = (events) => {
       console.log(req.param);
       events.findEvents(
         events.readTime(req.param("start"), req.param("end")),
-        //req.param.loc,
         events.readTypes(req.param("type")),
-        req.param("owner"),
+        events.readOwner(req.param("owner")),
+        events.readLocation(req.param("loc")),
+        Number(req.param("radius")),
         (err, data) => {
         if (err) {
           console.error(err);
@@ -88,6 +89,37 @@ module.exports = (events) => {
 
 
     });
+/*
+    router.get('/initdb', (req, res) => {
+      const data = [
+        {
+          "start":"2017-03-25T00:22:33.443Z",
+          "end":"2017-03-25T00:23:33.443Z",
+          "loc":"41.105233, 29.028161",
+          "type":"kultur",
+          "desc":"müze falan gezek aağbi",
+          "owner":"burak0"
+        },
+        {
+          "start":"2017-03-25T00:22:33.443Z",
+          "end":"2017-03-25T00:23:33.443Z",
+          "loc":"41.105205, 29.026477",
+          "type":"kultur",
+          "desc":"müze falan gezek aağbi",
+          "owner":"burak1"
+        },
+        {
+          "start":"2017-03-25T00:22:33.443Z",
+          "end":"2017-03-25T00:23:33.443Z",
+          "loc":"41.104911, 29.024269",
+          "type":"kultur",
+          "desc":"müze falan gezek aağbi",
+          "owner":"burak2"
+        }
+      ]
+      data.map(x => )
+    });
+    */
 
     return router;
 }

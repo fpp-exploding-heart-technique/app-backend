@@ -5,8 +5,12 @@ module.exports = (mongoose) => {
         start: Number,
         end: Number,
         location: {
-          type: [Number],
-          index: '2dsphere'
+          type: {type:String},
+          //'index' : '2dsphere',
+          coordinates: {
+            'type' : [Number],
+            'required' : true
+          }
         },
         description: String,
         attendees: [String],
@@ -64,12 +68,13 @@ module.exports = (mongoose) => {
       events.findOne({id_: id}, callback);
       //events.findById(id, callback);
     }
-    const findEvents = (time,/*loc,*/type,owner,callback) => {
+    const findEvents = (time,type,owner,loc,radius,callback) => {
       console.log("Get events:");
-      console.log("    time  : ", time);
-      console.log("    owner : ", owner);
-      //console.log("    loc: ", loc);
-      console.log("    type  : ", type);
+      console.log("    time   : ", time);
+      console.log("    owner  : ", owner);
+      console.log("    type   : ", type);
+      console.log("    loc    : ", loc);
+      console.log("    radius : ", radius);
 
       var query = {};
       if( time ){
@@ -79,11 +84,18 @@ module.exports = (mongoose) => {
       if( owner ) query["owner"] = owner;
       if( type  ) query["type"]  = {$in: type};
       console.log(query);
-      /*  if(loc   != undefined) {
+      if(loc != undefined ) {
+        radius = radius ? radius : 1000;
         query["location" ] = {
-          $nearSphere: loc, $maxDistance: searchRadius
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: loc
+            },
+            $maxDistance: radius
+          }
         };
-      }*/
+      }
       events.find(query, callback);
     };
 
@@ -92,7 +104,7 @@ module.exports = (mongoose) => {
       var e = new events({
         end: time_.end,
         start: time_.start,
-        location: loc_,
+        location: {type:"Point", coordinates:loc_},
         description: desc_,
         attendees: [],
         owner: owner_,
