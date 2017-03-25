@@ -7,7 +7,7 @@ module.exports = (mongoose) => {
 
     }, {collection: 'users'});
 
-    const User = mongoose.model('User', eventSchema);
+    const User = mongoose.model('User', userSchema);
 
     const searchUsers = (query, callback) => {
       console.log("Searching users:", query);

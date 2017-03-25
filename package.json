@@ -4,7 +4,7 @@
   "description": "My app description",
   "scripts": {
     "deploy": "npm test && git push heroku master",
-    "start": "nodemon server.js",
+    "start": "node server.js",
     "test": "mocha"
   },
   "dependencies": {
