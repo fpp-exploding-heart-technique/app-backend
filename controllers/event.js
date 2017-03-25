@@ -126,20 +126,22 @@ module.exports = (events) => {
     });
 
     // update an event
-    router.post('/:id', (req, res) => {
-      var id    = events.readId(req.param.id);
+    router.put('/', (req, res) => {
+      var id    = events.readId(req.body.eventId);
       var time  = events.readTime(req.body.start, req.body.end);
       var owner = events.readOwner(req.body.owner);
       var loc   = events.readLocation(req.body.loc);
       var type  = events.readType(req.body.type);
       var desc  = events.readDescription(req.body.desc);
       console.log("Update event:");
+      console.log("    id    : ", id);
       console.log("    time  : ", time);
       console.log("    owner : ", owner);
       console.log("    loc   : ", loc);
       console.log("    type  : ", type);
+      console.log("    desc  : ", desc);
 
-      events.updateEvent(id, time, owner, loc, desc, type, owner, (err, data) =>{
+      events.updateEvent(id, time, loc, desc, type, owner, (err, data) =>{
         if(err){
           console.error(err);
           res.sendStatus(400);

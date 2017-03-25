@@ -123,19 +123,26 @@ module.exports = (mongoose) => {
 
     }
 
-    const updateEvent = (id, time_, loc_, desc_, type_, owner_, callback) => {
+    const updateEvent = (eventId, time_, loc_, desc_, type_, owner_, callback) => {
       var setFields = {};
       if( time_  ) {
         setFields["start"]  = time_.start;
         setFields["end"]    = time_.end;
       }
-      if( owner_ ) setFields["owner"] = owner_;
-      if( type_  ) setFields["type"]  = type_;
-      events.update({_id: id}, setFields, { upsert: false }, callback);console.log("asd");
+      if( owner_ ) setFields["owner"]       = owner_;
+      if( type_  ) setFields["type"]        = type_;
+      if( loc_   ) {
+        setFields["loc.coordinates"] = [loc_.coordinates[0],loc_.coordinates[1]];
+        console.log(setFields["loc.coordinates"]);
+      }
+      if( desc_  ) setFields["description"] = desc_;
+
+      events.update({_id: eventId}, setFields, { upsert: false }, callback);
     }
 
     const attendRequest = (eventId, userId, callback) => {
-      console.log(eventId, userId);
+      console.log("Attend request: ", eventId, userId);
+      events.find({_id: eventId}, (err, data)=>console.log(data));
       events.update(
         {_id: eventId},
         {$addToSet: {requests: userId}},
@@ -145,6 +152,7 @@ module.exports = (mongoose) => {
     }
 
     const addAttendee = (eventId, userId, callback) => {
+      console.log("Add attendee: ", eventId, userId);
       events.update(
         {_id: eventId},
         {$pull: {requests: userId}, $addToSet: {attendees: userId}},
@@ -157,7 +165,7 @@ module.exports = (mongoose) => {
       readTime        : (start, end) => (Number(start), Number(end)), // read timestamp
       readLocation    : readLocation,
       readOwner       : str => str ? str : null,
-      readType        : str => (str in event_types) ? str : null, // valid type name
+      readType        : str => event_types.indexOf(str)>-1 ? str : null, // valid type name
       readTypes       : readArr((str) => str ? str : null), //
       readDescription : str => str && str.length < description_limit ? str : null,
       readId          : str => str ? str : null,
