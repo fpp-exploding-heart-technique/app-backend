@@ -50,6 +50,9 @@ module.exports = (events) => {
           if (err) {
             res.sendStatus(404);
           } else {
+            data.location = data.location.coordinates[0]+","+
+                            data.location.coordinates[1];
+            console.log(data.location);
             res.send(data);
           }
         });
@@ -105,15 +108,10 @@ module.exports = (events) => {
           res.send({message: "What can heroku do sometimes"});
         } else {
           res.send(data.map(x => {
-            return {
-              start: x.start,
-              end: x.end,
-              location: x.location,
-              title: x.title,
-              description: x.description,
-              owner: x.owner,
-              type: x.type
-            }
+            delete x.attendees; delete x.requests;
+            x.location = String(x.location.coordinates[0])+","+
+                         String(x.location.coordinates[1]);
+            return x;
           }));
         }
       });

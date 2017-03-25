@@ -66,11 +66,11 @@ module.exports = (mongoose) => {
 
     const findEventById = (eventId, callback) => {
       //events.findOne({_id: eventId}, callback);
-      events.findById(eventId, callback);
+      events.findById(eventId).lean().exec(callback);
     }
     const findEvents = (query,callback) => {
       console.log(query);
-      events.find(query, callback);
+      events.find(query).lean().exec(callback);
     };
 
 
