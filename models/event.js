@@ -21,6 +21,15 @@ module.exports = (mongoose) => {
     const events = mongoose.model('Event', eventSchema);
 
     // valid reading
+    const event_types = [
+      "Eğlence",
+      "Tarih",
+      "Kültür",
+      "Sanat",
+      "Spor",
+      "Doğa"
+    ];
+    const description_limit = 1500;
     const readTime = (start, end) => {
       try {
         start = Date.parse(start);
@@ -40,7 +49,7 @@ module.exports = (mongoose) => {
         try{
           loc = loc.map(Number);
 
-          return loc;
+          return {type:"Point", coordinates:loc};
         } catch(err) { // type error
           console.error(err.message);
           return null;
@@ -88,10 +97,7 @@ module.exports = (mongoose) => {
         radius = radius ? radius : 1000;
         query["location" ] = {
           $near: {
-            $geometry: {
-              type: "Point",
-              coordinates: loc
-            },
+            $geometry: loc,
             $maxDistance: radius
           }
         };
@@ -104,7 +110,7 @@ module.exports = (mongoose) => {
       var e = new events({
         end: time_.end,
         start: time_.start,
-        location: {type:"Point", coordinates:loc_},
+        location: loc_,
         description: desc_,
         attendees: [],
         owner: owner_,
@@ -127,13 +133,14 @@ module.exports = (mongoose) => {
     }
 
     return {
-      readTime        : readTime,
+      // Haskell'ciye node.js yazdiran getir mutlu mu simdi :(
+      readTime        : (start, end) => (Number(start), Number(end)), // read timestamp
       readLocation    : readLocation,
-      readOwner       : (str) => str ? str : null,
-      readType        : (str) => str ? str : null,
+      readOwner       : str => str ? str : null,
+      readType        : str => (str in event_types) ? str : null, // valid type name
       readTypes       : readArr((str) => str ? str : null), //
-      readDescription : (str) => str ? str : null,
-      readId          : (str) => str ? str : null,
+      readDescription : str => str && str.length < description_limit ? str : null,
+      readId          : str => str ? str : null,
 
       findEventById: findEventById,
       findEvents: findEvents,

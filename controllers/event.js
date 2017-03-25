@@ -1,6 +1,37 @@
 const router = require('express').Router();
 
 module.exports = (events) => {
+  router.post('/initdb', (req, res) => {
+    const data = [
+      {
+        "time":events.readTime( 1490427060000, 1490427062000),
+        "loc":events.readLocation("41.105233, 29.028161"),
+        "type":events.readType("kultur"),
+        "desc":events.readDescription("müze falan gezek aağbi"),
+        "owner":events.readOwner("burak0")
+      },
+      {
+        "time":events.readTime( 1490427060000, 1490427062000),
+        "loc":events.readLocation("41.105205, 29.026477"),
+        "type":events.readType("kultur"),
+        "desc":events.readDescription("müze falan gezek aağbi"),
+        "owner":events.readOwner("burak1")
+      },
+      {
+        "time":events.readTime( 1490427060000, 1490427062000),
+        "loc":events.readLocation("41.104911, 29.024269"),
+        "type":events.readType("kultur"),
+        "desc":events.readDescription("müze falan gezek aağbi"),
+        "owner":events.readOwner("burak2")
+      }
+    ];
+    console.log("done");
+    data.map(x => events.createEvent(
+      x.time, x.loc, x.desc, x.type, x.owner
+    ));
+    res.sendStatus(200);
+
+  });
 
     // get event by id
     router.get('/:id', (req, res) => {
@@ -15,6 +46,18 @@ module.exports = (events) => {
 
     });
     // get events, maybe filtered
+    // filter by time: find events that intersects with given time interval
+    //     start= 1490427060000 timestamp
+    //     end =  1490427062000
+    //
+    // filter by type: give list of appropriate types
+    //     type=["tarihi","kulturel","eglence"] bu temalardan herhangi
+    //                                          birinde olan eventler
+    // filter by owner:
+    //               owner: burak   burakin eventleri
+    // filter by location: find points in a radius
+    //     loc=36,42  enlem,boylam cifti
+    //     radius= 200  200 metre yaricapinda ara
     router.get('/', (req, res) => {
       console.log(req.param);
       events.findEvents(
@@ -35,10 +78,6 @@ module.exports = (events) => {
 
     // create event
     router.post('/', (req, res) => {
-      /* TODO
-        simdi hamza kardes. ben sadece burda var mı yok mu diye baktim,
-        sen date tipine gore bi valide edersin buncaazları.
-      */
       var time  = events.readTime(req.body.start, req.body.end);
       var owner = events.readOwner(req.body.owner);
       var loc   = events.readLocation(req.body.loc);
@@ -89,37 +128,8 @@ module.exports = (events) => {
 
 
     });
-/*
-    router.get('/initdb', (req, res) => {
-      const data = [
-        {
-          "start":"2017-03-25T00:22:33.443Z",
-          "end":"2017-03-25T00:23:33.443Z",
-          "loc":"41.105233, 29.028161",
-          "type":"kultur",
-          "desc":"müze falan gezek aağbi",
-          "owner":"burak0"
-        },
-        {
-          "start":"2017-03-25T00:22:33.443Z",
-          "end":"2017-03-25T00:23:33.443Z",
-          "loc":"41.105205, 29.026477",
-          "type":"kultur",
-          "desc":"müze falan gezek aağbi",
-          "owner":"burak1"
-        },
-        {
-          "start":"2017-03-25T00:22:33.443Z",
-          "end":"2017-03-25T00:23:33.443Z",
-          "loc":"41.104911, 29.024269",
-          "type":"kultur",
-          "desc":"müze falan gezek aağbi",
-          "owner":"burak2"
-        }
-      ]
-      data.map(x => )
-    });
-    */
+
+
 
     return router;
 }
