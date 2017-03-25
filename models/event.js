@@ -14,6 +14,7 @@ module.exports = (mongoose) => {
         },
         description: String,
         attendees: [String],
+        requests: [String],
         owner: String,
         type: String
     }, {collection: 'events'});
@@ -113,6 +114,7 @@ module.exports = (mongoose) => {
         location: loc_,
         description: desc_,
         attendees: [],
+        requests: [],
         owner: owner_,
         type: type_
       });
@@ -129,9 +131,27 @@ module.exports = (mongoose) => {
       }
       if( owner_ ) setFields["owner"] = owner_;
       if( type_  ) setFields["type"]  = type_;
-      events.update({id_: id}, {$set: setFields}, callback);console.log("asd");
+      events.update({_id: id}, setFields, { upsert: false }, callback);console.log("asd");
     }
 
+    const attendRequest = (eventId, userId, callback) => {
+      console.log(eventId, userId);
+      events.update(
+        {_id: eventId},
+        {$addToSet: {requests: userId}},
+        { upsert: false },
+        callback
+      );
+    }
+
+    const addAttendee = (eventId, userId, callback) => {
+      events.update(
+        {_id: eventId},
+        {$pull: {requests: userId}, $addToSet: {attendees: userId}},
+        { upsert: false },
+        callback
+      );
+    }
     return {
       // Haskell'ciye node.js yazdiran getir mutlu mu simdi :(
       readTime        : (start, end) => (Number(start), Number(end)), // read timestamp
@@ -142,9 +162,11 @@ module.exports = (mongoose) => {
       readDescription : str => str && str.length < description_limit ? str : null,
       readId          : str => str ? str : null,
 
-      findEventById: findEventById,
-      findEvents: findEvents,
-      createEvent: createEvent,
-      updateEvent: updateEvent
+      findEventById : findEventById,
+      findEvents    : findEvents,
+      createEvent   : createEvent,
+      updateEvent   : updateEvent,
+      attendRequest : attendRequest,
+      addAttendee   : addAttendee
     }
 }
