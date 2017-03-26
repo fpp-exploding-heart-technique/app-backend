@@ -169,7 +169,7 @@ module.exports = (events) => {
         if(err || !data){
           res.status(404);
           console.log(err);
-          res.send({message: "Event could not found"});
+          res.send({message: "Event could not found", "err":err});
         } else {
           res.send({message: "Request is added" });
         }
