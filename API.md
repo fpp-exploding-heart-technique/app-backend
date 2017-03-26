@@ -1,11 +1,11 @@
 ## API
 ### /events
-* / (GET) :
+* `/ (GET)` :
   Get a list of events.
   Optional arguments:
-  ** start (String of timestamp), end (String of timestamp): if both given, get events intersecting given time interval.
-  ** type ([String]): get events that has one of these types
-  ** loc (GeoJSON Point), radius (Number, meters): get events around the given point in given radius. if radius is not specified, it is 1000 by default.
+  ** `start` (String of timestamp), end (String of timestamp): if both given, get events intersecting given time interval.
+  ** `type` ([String]): get events that has one of these types
+  ** `loc` (GeoJSON Point), `radius` (Number, meters): get events around the given point in given radius. if radius is not specified, it is 1000 by default.
   Elements of the result array have the following format:
   ```javascript
   {
@@ -16,7 +16,7 @@
         "type": "<type>"
   }
   ```
-* / (POST) :
+* `/ (POST)` :
   Create new event. 
   Post data must have the following format:
   ```javascript
@@ -31,11 +31,11 @@
   }
   ```
   Restrictions:
-  ** title (String): Event title. Titles longer than 50 characters are truncated
-  ** desription (String): Event description. Descriptions longer than 1500 characters are truncated.
-  ** type (String): Event type. Event type must be one of these: Eğlence, Tarih, Kültür, Sanat, Spor, Doğa.
+  ** `title` (String): Event title. Titles longer than 50 characters are truncated
+  ** `desription` (String): Event description. Descriptions longer than 1500 characters are truncated.
+  ** `type` (String): Event type. Event type must be one of these: Eğlence, Tarih, Kültür, Sanat, Spor, Doğa.
 
-* /:id (GET) :
+* `/:id (GET)` :
   Get complete information of an event. Result has the following format:
   ```javascript
   {
@@ -50,7 +50,7 @@
   }
   ```
 
-* /:id (PUT) :
+* `/:id (PUT)` :
   Update the specified event. Post data must have the following format:
   ```javascript
   {
@@ -60,7 +60,7 @@
     ["type" : "<event type>"]
   }
   ```
-* /attendReq (POST) :
+* `/attendReq (POST)` :
   Add an attending request to specified event. Post data must have the following format:
   ```javascript
   {
@@ -68,7 +68,7 @@
     "eventId": "<event id>"
   }
   ```
-* /addAttendee (POST) :
+* `/addAttendee (POST)` :
   Reject a request or add attendee to specified event. Post data must have the following format:
   ```javascript
   {
@@ -77,14 +77,14 @@
     "confirm": (true|false)
   }
   ```
-  if "confirm" is true, attendee will be added
-  otherwise, "userId" will be removed from requests.
+  if `confirm` is true, `userId` will be added to `attendees` of the event.
+  otherwise, `userId` will be removed from `requests`.
   
-* /initdb (GET) :
+* `/initdb (GET)` :
   Drop collection.
 
 ### /users
-* /checkin (POST) :
+* `/checkin (POST)` :
   Create new user if it is the first time. 
   Post data must have the following format:
   ```javascript
@@ -94,7 +94,7 @@
   }
   ```
   
-* /:id (GET) :
+* `/:id (GET)` :
   Get facebook user id and name of a user with given facebook id. Result has the following format:
   ```javascript
   {
@@ -105,14 +105,14 @@
   }
   ```
   
-* /initdb (GET) :
+* `/initdb (GET)` :
   Drop collection.
 
 ### /pois
-* / (GET) :
+* `/ (GET)` :
   Get a list of POIs.
   Optional arguments:
-  ** loc (pair of lat,lon in String), radius (Number, meters): get events around the given point in given radius. if radius is not specified, it is 1000 by default.
+  ** `loc` (pair of lat,lon in String), `radius` (Number, meters): get events around the given point in given radius. if radius is not specified, it is 1000 by default.
   Elements of the result array have the following format:
   ```javascript
   {
@@ -121,7 +121,7 @@
         "description": "<description>",
   }
   ```
-* / (POST) :
+* `/ (POST)` :
   Create new POI. 
   Post data must have the following format:
   ```javascript
@@ -132,10 +132,10 @@
   }
   ```
   Restrictions:
-  ** title (String): Event title. Titles longer than 30 characters are truncated
-  ** desription (String): Event description. Descriptions longer than 1500 characters are truncated.
+  ** `title` (String): Event title. Titles longer than 30 characters are truncated
+  ** `desription` (String): Event description. Descriptions longer than 1500 characters are truncated.
 
-* /:id (GET) :
+* `/:id (GET)` :
   Get complete information of a POI. Result has the following format:
   ```javascript
   {
@@ -147,5 +147,5 @@
   }
   ```
   
-* /initdb (GET) :
+* `/initdb (GET)` :
   Drop collection.

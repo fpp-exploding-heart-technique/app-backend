@@ -105,6 +105,7 @@ module.exports = (events) => {
         query.type = {$in: t};
 
       // execute
+      console.log("Find events:",query);
       events.findEvents(query, (err, data) => {
         if (err) {
           console.error(err);
