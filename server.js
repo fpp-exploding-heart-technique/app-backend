@@ -20,12 +20,13 @@ var userController = require('./controllers/user');
 var contactController = require('./controllers/contact');
 
 var event = require('./controllers/event')(require('./models/event')(mongoose));
-var user = require('./controllers/user')(require('./models/user')(mongoose));
-var poi = require('./controllers/poi')(require('./models/poi')(mongoose));
+var user  = require('./controllers/user')(require('./models/user')(mongoose));
+var poi   = require('./controllers/poi')(require('./models/poi')(mongoose));
 
-
-// Passport OAuth strategies
-//require('./config/passport');
+console.log("Connecting to Redis server:", process.env.REDIS_URL);
+var cache = require('express-redis-cache')({
+  host: process.env.REDIS_URL
+});
 
 var app = express();
 mongoose.promise = Promise;
@@ -62,7 +63,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Kul yapimi routing
 app.use('/users', user);
 app.use('/events', event);
-app.use('/pois', poi);
+app.use('/pois', cache.route(), poi);
 // Production error handler
 if (app.get('env') === 'production') {
   app.use(function(err, req, res, next) {

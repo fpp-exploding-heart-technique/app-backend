@@ -15,6 +15,7 @@
     "dotenv": "^2.0.0",
     "express": "^4.13.4",
     "express-flash": "0.0.2",
+    "express-redis-cache": "^0.5.1",
     "express-session": "^1.2.1",
     "express-validator": "^2.20.4",
     "jade": "^1.11.0",

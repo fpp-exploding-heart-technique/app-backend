@@ -188,6 +188,7 @@ module.exports = (events) => {
           change.end   = t.end;
         }
         if(t = events.readOwner(req.body.owner))      change.owner    = t;
+        if(t = events.readLocation(req.body.loc))     change.location = t;
         if(t = events.readType(req.body.type))        change.type     = t;
         if(t = events.readDescription(req.body.desc)) change.description = t;
         console.log(change.start, change.end);
