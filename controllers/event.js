@@ -3,7 +3,15 @@ const router = require('express').Router();
 module.exports = (events) => {
     // initialize database with dummy data
     router.get('/initdb', (req, res) => {
-      const data = [
+      events.dropCollection((err) => {
+        if ( err ) {
+          console.error(err);
+          res.sendStatus(500);
+        } else {
+          res.sendStatus(200);
+        }
+      });
+      /*const data = [
         {
           attendees: [], requests: [],
           title       : events.readTitle("Event 1"),
@@ -35,19 +43,14 @@ module.exports = (events) => {
           owner       : events.readOwner("burak2")
         }
       ];
-
-      events.dropCollection((err) => {
-        if ( err ) {
-          console.error(err);
-          res.sendStatus(500);
-        }
-      });
       var r = 0;
       data.map(x => events.createEvent(
         x, (err,data)=>{console.log(x,err);}
       ));
       console.log(r);
       res.sendStatus(200);
+
+      */
 
     });
 
