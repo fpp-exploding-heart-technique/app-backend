@@ -153,7 +153,9 @@ module.exports = (events) => {
             res.status(500);
             res.send({message: "What can heroku do sometimes"});
           }
-          else res.send(data._id);
+          else {
+            res.send(data._id);
+          }
         });
       } else {
         res.status(400);

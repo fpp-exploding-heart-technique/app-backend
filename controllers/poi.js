@@ -44,7 +44,7 @@ module.exports = (pois) => {
 
     });
 
-    // get event by id
+    // get poi by id
     router.get('/:id', (req, res) => {
         console.log(req.params.id);
         pois.findById(req.params.id, (err, data) => {
