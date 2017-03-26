@@ -170,7 +170,7 @@ module.exports = (events) => {
           res.status(404);
           res.send({message: "Event could not found"});
         } else {
-          res.send({message: "Request is added"});
+          res.send({message: "Request is added" });
         }
       });
     });
