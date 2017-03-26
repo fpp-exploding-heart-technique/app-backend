@@ -23,7 +23,7 @@ module.exports = (mongoose) => {
       console.log("Creating new user:", name, facebook);
       const usr = new User({
         'facebook' : facebook,
-        'name'    : name
+        'name'     : name
       });
       usr.save(callback);
     };

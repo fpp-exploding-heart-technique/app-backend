@@ -17,7 +17,7 @@ module.exports = (User) => {
         res.send({message: "Successfully checked in", "data":data._id});
 
       else {
-        User.createUser(req.body.email, req.body.facebook, (err, data) => {
+        User.createUser(req.body.name, req.body.facebook, (err, data) => {
           if(err) {
             console.error(err);
             res.status(500);
