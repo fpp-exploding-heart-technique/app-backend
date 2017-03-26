@@ -166,7 +166,7 @@ module.exports = (events) => {
     */
     router.post('/attendReq', (req, res) => {
       events.attendRequest(req.body.eventId, req.body.userId, (err, data) => {
-        if(err){
+        if(err || !data){
           res.status(404);
           console.log(err);
           res.send({message: "Event could not found"});

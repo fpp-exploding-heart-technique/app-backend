@@ -89,13 +89,16 @@ module.exports = (mongoose) => {
 
     const attendRequest = (eventId, userId, callback) => {
       console.log("Attend request: ", eventId, userId);
-      events.find({_id: eventId}, (err, data)=>console.log(data));
-      events.update(
-        {_id: eventId},
-        {$addToSet: {requests: userId}},
-        { upsert: false },
-        callback
-      );
+      events.findOne({_id: eventId}, (err, data) => {
+        if ( !data ) callback(err,data);
+        else
+          events.update(
+            {_id: eventId},
+            {$addToSet: {requests: userId}},
+            { upsert: false },
+            callback
+          );
+      });
     }
 
     const addAttendee = (eventId, userId, confirmed, callback) => {
