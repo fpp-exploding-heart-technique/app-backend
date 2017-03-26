@@ -94,11 +94,13 @@ module.exports = (mongoose) => {
       );
     }
 
-    const addAttendee = (eventId, userId, callback) => {
+    const addAttendee = (eventId, userId, confirmed, callback) => {
       console.log("Add attendee: ", eventId, userId);
+      var change = {$pull: {requests: userId}};
+      if(confirmed == "true") change.$addToSet = {attendees: userId};
       events.update(
         {_id: eventId},
-        {$pull: {requests: userId}, $addToSet: {attendees: userId}},
+        change,
         { upsert: false },
         callback
       );

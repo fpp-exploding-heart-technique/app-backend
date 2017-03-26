@@ -162,7 +162,7 @@ module.exports = (events) => {
 
     // add attendee
     router.post('/addAttendee', (req, res) => {
-      events.addAttendee(req.body.eventId, req.body.userId, (err, data) => {
+      events.addAttendee(req.body.eventId, req.body.userId, req.body.userId, (err, data) => {
         if(err){
           res.status(404);
           res.send({message: "Event could not found"});
