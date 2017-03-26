@@ -16,6 +16,10 @@ module.exports = (User) => {
     });
   });
   router.post('/checkin', (req, res) => {
+    if(!req.body.name || !req.body.facebook){
+      res.status(400);
+      res.send({message: "Some parameters are missing"});
+    }
     User.findByFBId(req.body.facebook, (err, data) => {
       if(err) {
         console.error(err);
