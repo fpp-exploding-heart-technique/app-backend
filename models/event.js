@@ -14,8 +14,8 @@ module.exports = (mongoose) => {
         },
         title: String,
         description: String,
-        attendees: [String],
-        requests: [String],
+        attendees: [{id: String, name: String}],
+        requests: [{id: String, name: String}],
         owner: String,
         type: String
     }, {collection: 'events'});
@@ -86,24 +86,30 @@ module.exports = (mongoose) => {
       events.update({_id: eventId}, change, { upsert: false }, callback);
     }
 
-    const attendRequest = (eventId, userId, callback) => {
-      console.log("Attend request: ", eventId, userId);
+    const attendRequest = (eventId, userId, userName, callback) => {
+      console.log("Attend request: ", eventId, userId, userName);
       events.findOne({_id: eventId}, (err, data) => {
         if ( !data ) callback(err,data);
         else
           events.update(
             {_id: eventId},
-            {$addToSet: {requests: userId}},
+            {$addToSet: {
+              requests: {
+                "id":userId,
+                "name": userName
+              }
+            }},
             { upsert: false },
             callback
           );
       });
     }
 
-    const addAttendee = (eventId, userId, confirmed, callback) => {
+    const addAttendee = (eventId, userId, userName, confirmed, callback) => {
       console.log("Add attendee: ", eventId, userId);
-      var change = {$pull: {requests: userId}};
-      if(confirmed == "true") change.$addToSet = {attendees: userId};
+      var change = {$pull: {requests: {"id":userId}}};
+      if(confirmed == "true")
+        change.$addToSet = {attendees: {"id":userId, "name":userName }};
       events.update(
         {_id: eventId},
         change,

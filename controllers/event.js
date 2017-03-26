@@ -168,7 +168,7 @@ module.exports = (events) => {
 
     */
     router.post('/attendReq', (req, res) => {
-      events.attendRequest(req.body.eventId, req.body.userId, (err, data) => {
+      events.attendRequest(req.body.eventId, req.body.userId, req.body.name, (err, data) => {
         if(err || !data){
           res.status(404);
           console.log(err);
@@ -182,12 +182,16 @@ module.exports = (events) => {
     // reject a request or add attendee
     // if confirmed is true, add attendee otherwise reject the request
     router.post('/addAttendee', (req, res) => {
-      events.addAttendee(req.body.eventId, req.body.userId, req.body.confirmed, (err, data) => {
+      events.addAttendee(req.body.eventId, req.body.userId, req.body.name, req.body.confirmed, (err, data) => {
         if(err){
           res.status(404);
           res.send({message: "Event could not found"});
         } else {
-          res.send({message: "Attendee is added"});
+          if(req.body.confirmed == "true")
+            res.send({message: "Attendee is added"});
+          else
+            res.send({message: "Attend request rejected"});
+
         }
       });
     });
