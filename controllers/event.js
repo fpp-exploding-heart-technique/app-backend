@@ -168,6 +168,7 @@ module.exports = (events) => {
       events.attendRequest(req.body.eventId, req.body.userId, (err, data) => {
         if(err){
           res.status(404);
+          console.log(err);
           res.send({message: "Event could not found"});
         } else {
           res.send({message: "Request is added" });
