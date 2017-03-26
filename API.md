@@ -43,8 +43,8 @@
     "description": "<event description>",
     "owner": "<owner id>",
     "type": "<event type>",
-    "requests": <list of user ids requested to attend>,
-    "attendees": <list of user ids of attendees>,
+    "requests": [{"name":<name of request owner>, "id":<facebook user id of request owner>}],
+    "attendees": [{"name":<attendee name>, "id":<attendee facebook user id>}],
     "location": "<lat>,<lon>",
     "__v": <version number>
   }
@@ -65,6 +65,7 @@
   ```javascript
   {
     "userId": <user id>,
+    "name" : <user name>,
     "eventId": "<event id>"
   }
   ```
@@ -73,6 +74,7 @@
   ```javascript
   {
     "userId": <user id>,
+    "name" : <user name>,
     "eventId": "<event id>",
     "confirm": (true|false)
   }
