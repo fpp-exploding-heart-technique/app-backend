@@ -2,7 +2,7 @@ module.exports = (mongoose) => {
     var Schema = mongoose.Schema;
 
     const userSchema  = new Schema({
-      email: String,
+      name: String,
       facebook: String,
 
     }, {collection: 'users'});
@@ -19,11 +19,11 @@ module.exports = (mongoose) => {
       User.findOne({'facebook': facebook}, callback);
     };
 
-    const createUser = (email, facebook, callback) => {
-      console.log("Creating new user:", email, facebook);
+    const createUser = (name, facebook, callback) => {
+      console.log("Creating new user:", name, facebook);
       const usr = new User({
         'facebook' : facebook,
-        'email'    : email
+        'name'    : name
       });
       usr.save(callback);
     };

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 module.exports = (events) => {
+    // initialize database with dummy data
     router.get('/initdb', (req, res) => {
       const data = [
         {
@@ -65,21 +66,16 @@ module.exports = (events) => {
     //     end =  1490427062000
     //
     // filter by type: give list of appropriate types
-    //     type=["tarihi","kulturel","eglence"] bu temalardan herhangi
-    //                                          birinde olan eventler
+    //     type=["tarihi","kulturel","eglence"] events that has one of these types
     // filter by owner:
-    //               owner: burak   burakin eventleri
+    //               owner: burak   events created by "burak"
     // filter by location: find points in a radius
-    //     loc=36,42  enlem,boylam cifti
-    //     radius= 200  200 metre yaricapinda ara
+    //     loc=36,42     lat,lon pair in a string
+    //     radius= 200   search in 200 meters
     router.get('/', (req, res) => {
       // build the query
       var query = {};
       var t;
-      if(t = events.readId(req.param("eventId")))
-        query.id = t;
-      if(t = events.readTitle(req.param("title")))
-        query.title = t;
       if(t = events.readTime(req.param("start", req.param("end")))) {
         query.start = {$lt : t.end};
         query.end   = {$gt : t.start};
@@ -97,8 +93,6 @@ module.exports = (events) => {
       }
       if(t = events.readType(req.param("type")))
         query.type = {$in: t};
-      if(t = events.readDescription(req.param("desc")))
-        query.description = t;
 
       // execute
       events.findEvents(query, (err, data) => {
@@ -117,8 +111,16 @@ module.exports = (events) => {
       });
     });
 
-    // create event
+    /* create event
+          start: <timestamp>
+          end: <timestamp>
+          owner: <string>
+          location: "<lat>,<lon>"
+          type: <string>
+          description: <string>
+    */
     router.post('/', (req, res) => {
+      // build the object
       var e = {attendees : [], requests: []};
       var t;
       e.title = events.readTitle(req.body.title);
@@ -131,6 +133,7 @@ module.exports = (events) => {
       e.type        = events.readType(req.body.type);
       e.description = events.readDescription(req.body.desc);
       console.log("Create: ", e);
+      // save if everything is OK
       if ( e.description && e.title && e.start && e.end &&
            e.type && e.owner && e.location
       ) {
@@ -148,7 +151,9 @@ module.exports = (events) => {
       }
     });
 
-    // attendee request
+    /* add attendee request to specified event
+
+    */
     router.post('/attendReq', (req, res) => {
       events.attendRequest(req.body.eventId, req.body.userId, (err, data) => {
         if(err){
@@ -160,9 +165,10 @@ module.exports = (events) => {
       });
     });
 
-    // add attendee
+    // reject a request or add attendee
+    // if confirmed is true, add attendee otherwise reject the request
     router.post('/addAttendee', (req, res) => {
-      events.addAttendee(req.body.eventId, req.body.userId, req.body.userId, (err, data) => {
+      events.addAttendee(req.body.eventId, req.body.userId, req.body.confirmed, (err, data) => {
         if(err){
           res.status(404);
           res.send({message: "Event could not found"});
@@ -188,7 +194,6 @@ module.exports = (events) => {
           change.end   = t.end;
         }
         if(t = events.readOwner(req.body.owner))      change.owner    = t;
-        if(t = events.readLocation(req.body.loc))     change.location = t;
         if(t = events.readType(req.body.type))        change.type     = t;
         if(t = events.readDescription(req.body.desc)) change.description = t;
         console.log(change.start, change.end);

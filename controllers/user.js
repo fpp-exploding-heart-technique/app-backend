@@ -29,7 +29,20 @@ module.exports = (User) => {
     });
   });
 
-
+  router.get('/:id', (req, res) => {
+    User.findByFBId(req.params.id, (err, data) => {
+      if(err) {
+        console.error(err);
+        res.status(500);
+        res.send({message: "Error while searching user."});
+      }
+      if( data ) {
+        res.send(data);
+      }
+      res.status(404);
+      res.send({message: "User not found."});
+    });
+  });
 
 
 
