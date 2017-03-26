@@ -23,9 +23,11 @@ var event = require('./controllers/event')(require('./models/event')(mongoose));
 var user  = require('./controllers/user' )(require('./models/user' )(mongoose));
 var poi   = require('./controllers/poi'  )(require('./models/poi'  )(mongoose));
 
-/*console.log("Connecting to Redis server:", process.env.REDIS_URL);
-var cache = require('express-redis-cache')({
-  host: process.env.REDIS_URL
+//console.log("Connecting to Redis server:", process.env.REDIS_URL);
+/*var cache = require('express-redis-cache')({
+  host: "redis-10184.c12.us-east-1-4.ec2.cloud.redislabs.com",
+  auth_pass: "z4eGhLiSYf9kmyBe",
+  port: "10184"
 });*/
 
 var app = express();

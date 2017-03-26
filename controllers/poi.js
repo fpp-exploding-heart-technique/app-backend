@@ -1,5 +1,9 @@
 const router = require('express').Router();
-
+var cache = require('express-redis-cache')({
+  host: "redis-10184.c12.us-east-1-4.ec2.cloud.redislabs.com",
+  auth_pass: "z4eGhLiSYf9kmyBe",
+  port: "10184"
+});
 module.exports = (pois) => {
     router.get('/initdb', (req, res) => {
       const data = [
@@ -64,7 +68,7 @@ module.exports = (pois) => {
     // filter by location: find points in a radius
     //     loc=36,42  enlem,boylam cifti
     //     radius= 200  200 metre yaricapinda ara
-    router.get('/', (req, res) => {
+    router.get('/', cache.route('POI'),(req, res) => {
       // build the query
       var query = {};
       var t;
