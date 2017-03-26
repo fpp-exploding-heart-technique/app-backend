@@ -3,9 +3,9 @@
 * `/ (GET)` :
   Get a list of events.
   Optional arguments:
-  ** `start` (String of timestamp), end (String of timestamp): if both given, get events intersecting given time interval.
-  ** `type` ([String]): get events that has one of these types
-  ** `loc` (GeoJSON Point), `radius` (Number, meters): get events around the given point in given radius. if radius is not specified, it is 1000 by default.
+  * `start` (String of timestamp), end (String of timestamp): if both given, get events intersecting given time interval.
+  * `type` ([String]): get events that has one of these types
+  * `loc` (GeoJSON Point), `radius` (Number, meters): get events around the given point in given radius. if radius is not specified, it is 1000 by default.
   Elements of the result array have the following format:
   ```javascript
   {
@@ -31,9 +31,9 @@
   }
   ```
   Restrictions:
-  ** `title` (String): Event title. Titles longer than 50 characters are truncated
-  ** `desription` (String): Event description. Descriptions longer than 1500 characters are truncated.
-  ** `type` (String): Event type. Event type must be one of these: Eğlence, Tarih, Kültür, Sanat, Spor, Doğa.
+  * `title` (String): Event title. Titles longer than 50 characters are truncated
+  * `desription` (String): Event description. Descriptions longer than 1500 characters are truncated.
+  * `type` (String): Event type. Event type must be one of these: Eğlence, Tarih, Kültür, Sanat, Spor, Doğa.
 
 * `/:id (GET)` :
   Get complete information of an event. Result has the following format:
@@ -112,7 +112,7 @@
 * `/ (GET)` :
   Get a list of POIs.
   Optional arguments:
-  ** `loc` (pair of lat,lon in String), `radius` (Number, meters): get events around the given point in given radius. if radius is not specified, it is 1000 by default.
+  * `loc` (pair of lat,lon in String), `radius` (Number, meters): get events around the given point in given radius. if radius is not specified, it is 1000 by default.
   Elements of the result array have the following format:
   ```javascript
   {
@@ -132,8 +132,8 @@
   }
   ```
   Restrictions:
-  ** `title` (String): Event title. Titles longer than 30 characters are truncated
-  ** `desription` (String): Event description. Descriptions longer than 1500 characters are truncated.
+  * `title` (String): Event title. Titles longer than 30 characters are truncated
+  * `desription` (String): Event description. Descriptions longer than 1500 characters are truncated.
 
 * `/:id (GET)` :
   Get complete information of a POI. Result has the following format:
