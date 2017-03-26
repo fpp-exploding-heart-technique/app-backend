@@ -48,12 +48,12 @@ module.exports = (User) => {
         console.error(err);
         res.status(500);
         res.send({message: "Error while searching user."});
-      }
-      if( data ) {
+      } else if( data ) {
         res.send(data);
+      } else {
+        res.status(404);
+        res.send({message: "User not found."});
       }
-      res.status(404);
-      res.send({message: "User not found."});
     });
   });
 
