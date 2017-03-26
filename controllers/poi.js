@@ -29,6 +29,12 @@ module.exports = (pois) => {
           description : pois.readDescription("Sultan Ahmet Camii, 1609-1617 yılları arasında Osmanlı Padişahı I. Ahmed tarafından İstanbul'daki tarihî yarımadada, Mimar Sedefkâr Mehmed Ağa'ya yaptırılmıştır.")
         }
       ];
+      pois.dropCollection((err) => {
+        if ( err ) {
+          console.error(err);
+          res.sendStatus(500);
+        }
+      });
       var r = 0;
       data.map(x => pois.create(
         x, (err,data)=>{console.log(x,err);}

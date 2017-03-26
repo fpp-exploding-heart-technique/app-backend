@@ -35,6 +35,13 @@ module.exports = (events) => {
           owner       : events.readOwner("burak2")
         }
       ];
+
+      events.dropCollection((err) => {
+        if ( err ) {
+          console.error(err);
+          res.sendStatus(500);
+        }
+      });
       var r = 0;
       data.map(x => events.createEvent(
         x, (err,data)=>{console.log(x,err);}

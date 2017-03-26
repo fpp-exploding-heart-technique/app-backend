@@ -64,6 +64,10 @@ module.exports = (mongoose) => {
       };
     };
 
+    const dropCollection = (callback) => {
+      console.warn("Dropping collection: users");
+      events.collection.drop(callback);
+    }
     const findEventById = (eventId, callback) => {
       //events.findOne({_id: eventId}, callback);
       events.findById(eventId).lean().exec(callback);
@@ -119,6 +123,8 @@ module.exports = (mongoose) => {
       readDescription : str => str && str.length < description_limit ? str : null,
       readId          : str => str ? str : null,
 
+
+      dropCollection : dropCollection,
       findEventById : findEventById,
       findEvents    : findEvents,
       createEvent   : createEvent,

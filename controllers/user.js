@@ -5,7 +5,16 @@ module.exports = (User) => {
   /*
     GET
   */
-
+  router.get('/initdb', (req, res) => {
+    User.dropCollection((err) => {
+      if ( err ) {
+        console.error(err);
+        res.sendStatus(500);
+      } else {
+        res.sendStatus(200);
+      }
+    });
+  });
   router.post('/checkin', (req, res) => {
     User.findByFBId(req.body.facebook, (err, data) => {
       if(err) {

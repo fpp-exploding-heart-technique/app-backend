@@ -50,6 +50,10 @@ module.exports = (mongoose) => {
       };
     };
 
+    const dropCollection = (callback) => {
+      console.warn("Dropping collection: users");
+      POI.collection.drop(callback);
+    }
     const findById = (poiId, callback) => {
       POI.findById(poiId).lean().exec(callback);
     };
@@ -71,6 +75,8 @@ module.exports = (mongoose) => {
       readDescription : str => str && str.length < description_limit ? str : null,
       readId          : str => str ? str : null,
 
+
+      dropCollection : dropCollection,
       findById : findById,
       find     : find,
       create   : create

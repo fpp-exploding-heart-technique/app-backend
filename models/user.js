@@ -9,6 +9,11 @@ module.exports = (mongoose) => {
 
     const User = mongoose.model('User', userSchema);
 
+    const dropCollection = (callback) => {
+      console.warn("Dropping collection: users");
+      User.collection.drop(callback);
+    }
+
     const find = (query, callback) => {
       console.log("Searching user:", query);
       User.find(query, callback);
@@ -30,6 +35,7 @@ module.exports = (mongoose) => {
 
 
     return {
+      dropCollection : dropCollection,
       find     : find,
       //findOne  : findOne,
       findByFBId : findByFBId,
