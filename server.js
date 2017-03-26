@@ -29,7 +29,7 @@ var cache = require('express-redis-cache')({
 });*/
 
 var app = express();
-mongoose.promise = Promise;
+mongoose.promise = global.Promise;
 console.log("Using database at:",process.env.MONGODB_URI || process.env.MONGODB);
 mongoose.connect(process.env.MONGODB_URI || process.env.MONGODB);
 mongoose.connection.on('error', function(err) {
