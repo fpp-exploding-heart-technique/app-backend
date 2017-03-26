@@ -50,7 +50,7 @@ module.exports = (pois) => {
 
     // get poi by id
     router.get('/:id', (req, res) => {
-        console.log(req.params.id);
+        console.log("Get poi by id", req.params.id);
         pois.findById(req.params.id, (err, data) => {
           if (err) {
             res.sendStatus(404);
@@ -85,7 +85,7 @@ module.exports = (pois) => {
       // execute
       pois.find(query, (err, data) => {
         if (err) {
-          console.error(err);
+          console.error("Find POIs:", err);
           res.status(500);
           res.send({message: "What can heroku do sometimes"});
         } else {
